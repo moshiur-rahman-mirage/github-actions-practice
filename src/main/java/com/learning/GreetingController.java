@@ -11,6 +11,11 @@ public class GreetingController {
         return new Greeting("Hello, world!");
     }
 
+    @GetMapping("/api/hello2")
+    public Greeting greeting2() {
+        return new Greeting("Hello, world 2!");
+    }
+
     public record Greeting(String message) {
     }
 }

@@ -1,64 +1,33 @@
 
-name: Spring Boot CI
+name: Step 16 Practice
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'feature/**'
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - '.github/**'
+
   pull_request:
     branches: [main]
+
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  test:
+  reusable-ci:
+    uses: ./.github/workflows/shared-ci.yml
+    with:
+      java-version: '21'
+
+  composite-action:
     runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-        
-      - name: Show workflow context
-        run: |
-          echo "Repository: ${{ github.repository }}"
-          echo "Branch or ref: ${{ github.ref_name }}"
-          echo "Application environment: ${{ vars.APP_ENV }}"
-
-          
-      - name: Generate build information
-        id: info
-        run: echo "message=CI pipeline is running" >> "$GITHUB_OUTPUT"
-
-      - name: Read build information
-        run: echo "${{ steps.info.outputs.message }}"
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-
-      - name: Show application configuration
-        env:
-          DEMO_TOKEN: ${{ secrets.DEMO_TOKEN }}
-        run: |
-          echo "Application: $APP_NAME"
-          echo "Environment: ${{ vars.APP_ENV }}"
-          if [ -n "$DEMO_TOKEN" ]; then
-            echo "Demo token is configured"
-          else
-            echo "Demo token is not configured"
-          fi
-
-
-      - name: Run tests
-        run: mvn --batch-mode test
-
-  build:
-    runs-on: ubuntu-latest
-    needs: test
+    needs: reusable-ci
 
     steps:
       - name: Checkout repository
@@ -69,14 +38,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-          cache: maven
 
-      - name: Build and verify
-        run: mvn --batch-mode clean verify
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+      - name: Run composite action
+        uses: ./.github/actions/hello
         with:
-          name: java-build
-          path: target/*.jar
-          if-no-files-found: error
+          app-name: github-actions-learning

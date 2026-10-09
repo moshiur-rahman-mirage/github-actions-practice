@@ -36,6 +36,7 @@ jobs:
           else
             echo "Demo token is not configured"
           fi
+          
 
       - name: Run tests
         run: mvn --batch-mode test

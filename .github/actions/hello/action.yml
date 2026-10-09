@@ -1,0 +1,22 @@
+name: Hello Action
+description: Print the application name and Java version
+
+inputs:
+  app-name:
+    description: Application name
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Print application name
+      shell: bash
+      run: 'echo "Application: ${{ inputs.app-name }}"'
+
+    - name: Print Java version
+      shell: bash
+      run: java -version
+
+    - name: Print completion message
+      shell: bash
+      run: echo "Composite action completed"

@@ -1,23 +1,32 @@
 
-name: Hello Action
-description: Reusable Java CI steps
+name: Shared Java CI
 
-inputs:
-  app-name:
-    description: Application name
-    required: true
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: Java version
+        required: false
+        type: string
+        default: '21'
 
-runs:
-  using: composite
-  steps:
-    - name: Print application name
-      shell: bash
-      run: echo "Application: ${{ inputs.app-name }}"
+permissions:
+  contents: read
 
-    - name: Print Java version
-      shell: bash
-      run: java -version
+jobs:
+  test:
+    runs-on: ubuntu-latest
 
-    - name: Print completion message
-      shell: bash
-      run: echo "Composite action completed"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java-version }}
+          cache: maven
+
+      - name: Run Maven tests
+        run: mvn --batch-mode test

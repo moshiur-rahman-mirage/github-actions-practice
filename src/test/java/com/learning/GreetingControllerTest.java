@@ -19,7 +19,7 @@ class GreetingControllerTest {
 
     @Test
     void returnsGreeting() throws Exception {
-        mockMvc.perform(get("/api/hell2o"))
+        mockMvc.perform(get("/api/hello"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Hello, world!"));
     }

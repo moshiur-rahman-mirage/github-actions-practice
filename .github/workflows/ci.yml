@@ -25,6 +25,18 @@ jobs:
           java-version: '21'
           cache: maven
 
+      - name: Show application configuration
+        env:
+          DEMO_TOKEN: ${{ secrets.DEMO_TOKEN }}
+        run: |
+          echo "Application: $APP_NAME"
+          echo "Environment: ${{ vars.APP_ENV }}"
+          if [ -n "$DEMO_TOKEN" ]; then
+            echo "Demo token is configured"
+          else
+            echo "Demo token is not configured"
+          fi
+
       - name: Run tests
         run: mvn --batch-mode test
 

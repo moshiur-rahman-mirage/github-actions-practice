@@ -25,6 +25,14 @@ jobs:
           echo "Branch or ref: ${{ github.ref_name }}"
           echo "Application environment: ${{ vars.APP_ENV }}"
 
+          
+      - name: Generate build information
+        id: info
+        run: echo "message=CI pipeline is running" >> "$GITHUB_OUTPUT"
+
+      - name: Read build information
+        run: echo "${{ steps.info.outputs.message }}"
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:

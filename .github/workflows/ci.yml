@@ -1,18 +1,33 @@
 
-name: Spring Boot CI
+name: Step 16 Practice
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'feature/**'
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - '.github/**'
+
   pull_request:
     branches: [main]
+
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  test:
+  reusable-ci:
+    uses: ./.github/workflows/shared-ci.yml
+    with:
+      java-version: '21'
+
+  composite-action:
     runs-on: ubuntu-latest
+    needs: reusable-ci
 
     steps:
       - name: Checkout repository
@@ -23,32 +38,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-          cache: maven
 
-      - name: Run tests
-        run: mvn --batch-mode test
-
-  build:
-    runs-on: ubuntu-latest
-    needs: test
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - name: Run composite action
+        uses: ./.github/actions/hello
         with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-
-      - name: Build and verify
-        run: mvn --batch-mode clean verify
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: java-build
-          path: target/*.jar
-          if-no-files-found: error
+          app-name: github-actions-learning

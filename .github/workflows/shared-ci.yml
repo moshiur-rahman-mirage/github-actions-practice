@@ -1,0 +1,32 @@
+
+name: Shared Java CI
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: Java version
+        required: false
+        type: string
+        default: '21'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java-version }}
+          cache: maven
+
+      - name: Run Maven tests
+        run: mvn --batch-mode test

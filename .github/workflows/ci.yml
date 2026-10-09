@@ -18,6 +18,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+        
+      - name: Show workflow context
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch or ref: ${{ github.ref_name }}"
+          echo "Application environment: ${{ vars.APP_ENV }}"
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -36,7 +43,7 @@ jobs:
           else
             echo "Demo token is not configured"
           fi
-          
+
 
       - name: Run tests
         run: mvn --batch-mode test

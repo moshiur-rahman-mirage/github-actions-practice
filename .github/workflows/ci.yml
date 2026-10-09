@@ -1,24 +1,33 @@
-
-name: My First CI Workflow
+name: Spring Boot CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
-  hello:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Print greeting
-        run: echo "Hello from GitHub Actions!"
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Check Java version
+        run: java -version
 
-      - name: Show current directory
-        run: pwd
+      - name: Run tests
+        run: mvn -B test
 
-      - name: List project files
-        run: ls -la
+      - name: Build and test
+        run: mvn --batch-mode clean verify
